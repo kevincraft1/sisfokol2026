@@ -27,10 +27,13 @@
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Hak Akses (Role)</label>
-                <select name="role" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    <option value="guru">Guru (Hanya nulis berita & galeri)</option>
-                    <option value="kepsek">Kepsek (Hanya memantau/Viewer)</option>
-                    <option value="admin">Admin Utama (Akses penuh)</option>
+                <select name="role" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    <option value="">-- Pilih Hak Akses --</option>
+                    <?php foreach ($roles as $r): ?>
+                        <option value="<?= $r['slug_role']; ?>" <?= old('role') == $r['slug_role'] ? 'selected' : ''; ?>>
+                            <?= $r['nama_role']; ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>

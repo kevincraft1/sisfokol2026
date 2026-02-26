@@ -4,14 +4,17 @@ namespace App\Controllers\Panel;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\RoleModel; // Tambahkan ini
 
 class Users extends BaseController
 {
     protected $userModel;
+    protected $roleModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
+        $this->roleModel = new RoleModel(); // Inisialisasi RoleModel
     }
 
     public function index()
@@ -25,7 +28,11 @@ class Users extends BaseController
 
     public function create()
     {
-        return view('panel/users/create', ['title' => 'Tambah Pengguna Baru']);
+        $data = [
+            'title' => 'Tambah Pengguna Baru',
+            'roles' => $this->roleModel->findAll() // Kirim daftar role dinamis
+        ];
+        return view('panel/users/create', $data);
     }
 
     public function store()
@@ -49,11 +56,8 @@ class Users extends BaseController
         $this->userModel->save($newData);
         $insertedId = $this->userModel->getInsertID();
 
-        // Keamanan: Hapus password_hash dari data yang akan dicatat di log
         $logData = $newData;
         unset($logData['password_hash']);
-
-        // --- CATAT AKTIVITAS LOG: CREATE ---
         audit_log('CREATE', 'Manajemen Pengguna', $insertedId, null, $logData);
 
         session()->setFlashdata('pesan', 'Pengguna baru berhasil ditambahkan.');
@@ -64,7 +68,8 @@ class Users extends BaseController
     {
         $data = [
             'title' => 'Edit Pengguna',
-            'user'  => $this->userModel->find($id)
+            'user'  => $this->userModel->find($id),
+            'roles' => $this->roleModel->findAll() // Kirim daftar role dinamis
         ];
         return view('panel/users/edit', $data);
     }
@@ -87,13 +92,10 @@ class Users extends BaseController
 
         $this->userModel->update($id, $dataUpdate);
 
-        // Keamanan: Hapus password_hash dari log
         $logDataUpdate = $dataUpdate;
         $logUserLama = $userLama;
         unset($logDataUpdate['password_hash']);
         unset($logUserLama['password_hash']);
-
-        // --- CATAT AKTIVITAS LOG: UPDATE ---
         audit_log('UPDATE', 'Manajemen Pengguna', $id, $logUserLama, $logDataUpdate);
 
         session()->setFlashdata('pesan', 'Data pengguna berhasil diperbarui.');
@@ -102,29 +104,22 @@ class Users extends BaseController
 
     public function delete($id)
     {
-        // 1. Cegah menghapus akun diri sendiri yang sedang login
         if ($id == session()->get('id')) {
             session()->setFlashdata('error', 'Akses Ditolak: Anda tidak bisa menghapus akun Anda sendiri!');
             return redirect()->to('/panel/users');
         }
 
-        // Cari tahu role user yang akan dihapus
         $userTarget = $this->userModel->find($id);
 
-        // 2. Cegah menghapus akun dengan role 'Admin'
         if ($userTarget['role'] === 'admin') {
             session()->setFlashdata('error', 'Akses Ditolak: Akun dengan hak akses Admin tidak boleh dihapus!');
             return redirect()->to('/panel/users');
         }
 
-        // Jika lolos kedua validasi di atas, hapus user
         $this->userModel->delete($id);
 
-        // Keamanan: Hapus password_hash dari log
         $logUserTarget = $userTarget;
         unset($logUserTarget['password_hash']);
-
-        // --- CATAT AKTIVITAS LOG: DELETE ---
         audit_log('DELETE', 'Manajemen Pengguna', $id, $logUserTarget, null);
 
         session()->setFlashdata('pesan', 'Pengguna berhasil dihapus.');

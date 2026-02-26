@@ -59,7 +59,16 @@
 
 <body class="bg-gray-50 text-gray-800" x-data="{ sidebarOpen: true }">
 
-    <?php $userRole = strtolower(session()->get('role') ?? ''); ?>
+    <?php
+    // Ambil daftar akses modul dari session
+    $userAccess = session()->get('user_access') ?? [];
+
+    // Fungsi helper untuk mengecek apakah user boleh melihat menu
+    function canAccess($modul, $accessList)
+    {
+        return in_array($modul, $accessList);
+    }
+    ?>
 
     <div class="flex h-screen overflow-hidden">
 
@@ -78,7 +87,7 @@
                     </a>
                 </div>
 
-                <?php if ($userRole === 'admin' || $userRole === 'guru'): ?>
+                <?php if (canAccess('berita', $userAccess) || canAccess('galeri', $userAccess)): ?>
                     <div x-data="{ open: <?= (strpos(current_url(), 'berita') !== false || strpos(current_url(), 'galeri') !== false) ? 'true' : 'false'; ?> }">
                         <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group <?= (strpos(current_url(), 'berita') !== false || strpos(current_url(), 'galeri') !== false) ? 'text-white' : ''; ?>">
                             <div class="flex items-center">
@@ -88,11 +97,17 @@
                             <i x-show="sidebarOpen" class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="open && sidebarOpen" x-collapse class="pl-10 pr-3 py-1 space-y-1">
-                            <a href="<?= base_url('panel/berita'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'berita') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Artikel & Berita</a>
-                            <a href="<?= base_url('panel/galeri'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'galeri') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Foto Kegiatan (Galeri)</a>
+                            <?php if (canAccess('berita', $userAccess)): ?>
+                                <a href="<?= base_url('panel/berita'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'berita') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Artikel & Berita</a>
+                            <?php endif; ?>
+                            <?php if (canAccess('galeri', $userAccess)): ?>
+                                <a href="<?= base_url('panel/galeri'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'galeri') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Foto Kegiatan (Galeri)</a>
+                            <?php endif; ?>
                         </div>
                     </div>
+                <?php endif; ?>
 
+                <?php if (canAccess('profil', $userAccess) || canAccess('jurusan', $userAccess) || canAccess('hero', $userAccess) || canAccess('mitra', $userAccess)): ?>
                     <div x-data="{ open: <?= (strpos(current_url(), 'profil') !== false || strpos(current_url(), 'jurusan') !== false || strpos(current_url(), 'hero') !== false || strpos(current_url(), 'mitra') !== false) ? 'true' : 'false'; ?> }">
                         <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group <?= (strpos(current_url(), 'profil') !== false || strpos(current_url(), 'jurusan') !== false || strpos(current_url(), 'hero') !== false || strpos(current_url(), 'mitra') !== false) ? 'text-white' : ''; ?>">
                             <div class="flex items-center">
@@ -102,49 +117,64 @@
                             <i x-show="sidebarOpen" class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                         </button>
                         <div x-show="open && sidebarOpen" x-collapse class="pl-10 pr-3 py-1 space-y-1">
-                            <a href="<?= base_url('panel/profil'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'profil') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Profil & Visi Misi</a>
-
-                            <?php if ($userRole === 'admin'): ?>
+                            <?php if (canAccess('profil', $userAccess)): ?>
+                                <a href="<?= base_url('panel/profil'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'profil') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Profil & Visi Misi</a>
+                            <?php endif; ?>
+                            <?php if (canAccess('jurusan', $userAccess)): ?>
                                 <a href="<?= base_url('panel/jurusan'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'jurusan') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Program Keahlian</a>
+                            <?php endif; ?>
+                            <?php if (canAccess('hero', $userAccess)): ?>
                                 <a href="<?= base_url('panel/hero'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'hero') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Hero Section Utama</a>
+                            <?php endif; ?>
+                            <?php if (canAccess('mitra', $userAccess)): ?>
                                 <a href="<?= base_url('panel/mitra'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'mitra') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Logo Mitra Industri</a>
                             <?php endif; ?>
                         </div>
                     </div>
                 <?php endif; ?>
 
-                <div>
-                    <a href="<?= base_url('panel/pesan'); ?>" class="flex items-center px-3 py-2.5 <?= strpos(current_url(), 'pesan') !== false ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white'; ?> rounded-lg transition-colors group">
-                        <i class="fa-solid fa-envelope-open-text w-6 text-center <?= strpos(current_url(), 'pesan') !== false ? 'text-white' : 'group-hover:text-indigo-400'; ?> transition-colors relative">
-                            <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-slate-900"></span>
-                            </span>
-                        </i>
-                        <span x-show="sidebarOpen" class="ml-3 font-medium text-sm">Inbox Pesan Masuk</span>
-                    </a>
-                </div>
+                <?php if (canAccess('pesan', $userAccess)): ?>
+                    <div>
+                        <a href="<?= base_url('panel/pesan'); ?>" class="flex items-center px-3 py-2.5 <?= strpos(current_url(), 'pesan') !== false ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white'; ?> rounded-lg transition-colors group">
+                            <i class="fa-solid fa-envelope-open-text w-6 text-center <?= strpos(current_url(), 'pesan') !== false ? 'text-white' : 'group-hover:text-indigo-400'; ?> transition-colors relative">
+                                <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-slate-900"></span>
+                                </span>
+                            </i>
+                            <span x-show="sidebarOpen" class="ml-3 font-medium text-sm">Inbox Pesan Masuk</span>
+                        </a>
+                    </div>
+                <?php endif; ?>
 
-                <?php if ($userRole === 'admin'): ?>
+                <?php if (canAccess('setting', $userAccess)): ?>
                     <div>
                         <a href="<?= base_url('panel/setting'); ?>" class="mb-2 flex items-center px-3 py-2.5 <?= strpos(current_url(), 'setting') !== false ? 'bg-indigo-600 text-white' : 'hover:bg-slate-800 hover:text-white'; ?> rounded-lg group transition-colors">
                             <i class="fa-solid fa-sliders w-6 text-center <?= strpos(current_url(), 'setting') !== false ? 'text-white' : 'group-hover:text-indigo-400'; ?>"></i>
                             <span x-show="sidebarOpen" class="ml-3 font-medium text-sm">Pengaturan Web</span>
                         </a>
+                    </div>
+                <?php endif; ?>
 
-                        <div x-data="{ open: <?= (strpos(current_url(), 'users') !== false || strpos(current_url(), 'roles') !== false || strpos(current_url(), 'log') !== false) ? 'true' : 'false'; ?> }">
-                            <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group <?= (strpos(current_url(), 'users') !== false || strpos(current_url(), 'roles') !== false || strpos(current_url(), 'log') !== false) ? 'text-white' : ''; ?>">
-                                <div class="flex items-center">
-                                    <i class="fa-solid fa-shield-halved w-6 text-center <?= (strpos(current_url(), 'users') !== false || strpos(current_url(), 'roles') !== false || strpos(current_url(), 'log') !== false) ? 'text-indigo-400' : 'group-hover:text-indigo-400'; ?> transition-colors"></i>
-                                    <span x-show="sidebarOpen" class="ml-3 font-medium text-sm">Otoritas Akun</span>
-                                </div>
-                                <i x-show="sidebarOpen" class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
-                            </button>
-                            <div x-show="open && sidebarOpen" x-collapse class="pl-10 pr-3 py-1 space-y-1">
-                                <a href="<?= base_url('panel/users'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'users') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Daftar Pengguna</a>
-                                <a href="#" class="block py-2 text-sm <?= strpos(current_url(), 'roles') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Hak Akses (Roles)</a>
-                                <a href="<?= base_url('panel/log'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'log') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Log Aktivitas</a>
+                <?php if (canAccess('users', $userAccess) || canAccess('roles', $userAccess) || canAccess('log', $userAccess)): ?>
+                    <div x-data="{ open: <?= (strpos(current_url(), 'users') !== false || strpos(current_url(), 'roles') !== false || strpos(current_url(), 'log') !== false) ? 'true' : 'false'; ?> }">
+                        <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg hover:bg-slate-800 hover:text-white transition-colors group <?= (strpos(current_url(), 'users') !== false || strpos(current_url(), 'roles') !== false || strpos(current_url(), 'log') !== false) ? 'text-white' : ''; ?>">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-shield-halved w-6 text-center <?= (strpos(current_url(), 'users') !== false || strpos(current_url(), 'roles') !== false || strpos(current_url(), 'log') !== false) ? 'text-indigo-400' : 'group-hover:text-indigo-400'; ?> transition-colors"></i>
+                                <span x-show="sidebarOpen" class="ml-3 font-medium text-sm">Otoritas Akun</span>
                             </div>
+                            <i x-show="sidebarOpen" class="fa-solid fa-chevron-down text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open && sidebarOpen" x-collapse class="pl-10 pr-3 py-1 space-y-1">
+                            <?php if (canAccess('users', $userAccess)): ?>
+                                <a href="<?= base_url('panel/users'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'users') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Daftar Pengguna</a>
+                            <?php endif; ?>
+                            <?php if (canAccess('roles', $userAccess)): ?>
+                                <a href="<?= base_url('panel/roles'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'roles') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Hak Akses (Roles)</a>
+                            <?php endif; ?>
+                            <?php if (canAccess('log', $userAccess)): ?>
+                                <a href="<?= base_url('panel/log'); ?>" class="block py-2 text-sm <?= strpos(current_url(), 'log') !== false ? 'text-indigo-400 font-medium' : 'text-gray-400 hover:text-white'; ?> transition-colors">Log Aktivitas</a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endif; ?>

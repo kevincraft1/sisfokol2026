@@ -53,15 +53,15 @@
                     </div>
 
                     <div class="relative">
-                        <input type="file" id="hero_image" name="hero_image" accept="image/png, image/jpeg, image/jpg, image/webp" class="hidden" onchange="previewImage()">
+                        <input type="file" id="hero_image" name="hero_image" accept="image/png, image/jpeg, image/jpg, image/webp" class="hidden">
                         <label for="hero_image" class="cursor-pointer flex items-center justify-center w-full px-4 py-2.5 border-2 border-dashed border-indigo-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-500 transition-all group">
                             <i class="fa-solid fa-cloud-arrow-up text-indigo-400 group-hover:text-indigo-600 text-lg mr-2 transition-colors"></i>
                             <span class="text-sm text-indigo-600 font-medium">Pilih Gambar Baru</span>
                         </label>
                     </div>
+                    <p id="compressionStatus" class="text-xs text-center font-medium mt-2"></p>
                     <ul class="text-[11px] text-gray-500 mt-3 space-y-1 list-disc list-inside">
-                        <li>Format: JPG, JPEG, PNG, WEBP</li>
-                        <li>Maksimal ukuran file: 2 MB</li>
+                        <li>Gambar akan otomatis dikompresi ke format WebP</li>
                         <li>Rekomendasi rasio: 16:9 (Landscape)</li>
                     </ul>
                 </div>
@@ -70,7 +70,7 @@
         </div>
 
         <div class="mt-8 pt-5 border-t border-gray-100 flex justify-end">
-            <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white font-semibold text-sm rounded-lg hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5 focus:ring-4 focus:ring-indigo-500/30 transition-all flex items-center">
+            <button type="submit" id="btnSubmit" class="px-6 py-2.5 bg-indigo-600 text-white font-semibold text-sm rounded-lg hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5 focus:ring-4 focus:ring-indigo-500/30 transition-all flex items-center">
                 <i class="fa-solid fa-floppy-disk mr-2"></i> Simpan Perubahan Hero
             </button>
         </div>
@@ -78,21 +78,86 @@
 </div>
 
 <script>
-    function previewImage() {
-        const image = document.querySelector('#hero_image');
+    document.getElementById('hero_image').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
         const imgPreview = document.querySelector('#imgPreview');
+        const statusText = document.getElementById('compressionStatus');
+        const btnSubmit = document.getElementById('btnSubmit');
 
-        if (image.files && image.files[0]) {
+        statusText.textContent = "Sedang mengompresi gambar banner...";
+        statusText.className = "text-xs text-center font-medium mt-2 text-orange-500";
+        btnSubmit.disabled = true;
+        btnSubmit.classList.add('opacity-50');
+
+        try {
+            const compressedFile = await compressImageToWebP(file, 50);
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(compressedFile);
+            e.target.files = dataTransfer.files;
+
+            statusText.textContent = `Selesai! WebP (${(compressedFile.size / 1024).toFixed(2)} KB)`;
+            statusText.className = "text-xs text-center font-medium mt-2 text-green-600";
+
+            // Preview Gambar
             const fileReader = new window.FileReader();
-
-            fileReader.onload = function(e) {
-                imgPreview.src = e.target.result;
-                // Hilangkan efek grayscale jika gambar dummy diganti
+            fileReader.onload = function(event) {
+                imgPreview.src = event.target.result;
                 imgPreview.classList.remove('grayscale', 'opacity-70');
             }
+            fileReader.readAsDataURL(compressedFile);
 
-            fileReader.readAsDataURL(image.files[0]);
+        } catch (error) {
+            statusText.textContent = "Gagal mengompresi gambar.";
+            statusText.className = "text-xs text-center font-medium mt-2 text-red-600";
+        } finally {
+            btnSubmit.disabled = false;
+            btnSubmit.classList.remove('opacity-50');
         }
+    });
+
+    function compressImageToWebP(file, maxKB) {
+        return new Promise((resolve, reject) => {
+            const maxSize = maxKB * 1024;
+            const reader = new window.FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const MAX_WIDTH = 1200;
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    let quality = 0.9;
+                    const attemptCompress = () => {
+                        canvas.toBlob((blob) => {
+                            if (blob.size <= maxSize || quality <= 0.1) {
+                                resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
+                                    type: 'image/webp'
+                                }));
+                            } else {
+                                quality -= 0.1;
+                                attemptCompress();
+                            }
+                        }, 'image/webp', quality);
+                    };
+                    attemptCompress();
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
     }
 </script>
 <?= $this->endSection(); ?>

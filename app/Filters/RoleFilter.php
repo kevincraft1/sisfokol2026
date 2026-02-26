@@ -10,13 +10,24 @@ class RoleFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        // Ambil role user yang sedang login
-        $role = session()->get('role');
+        // Ambil daftar akses modul dari session yang di-set saat login
+        $userAccess = session()->get('user_access') ?? [];
 
-        // Jika route memiliki argument (syarat role), cek apakah role user ada di dalamnya
-        if ($arguments && !in_array($role, $arguments)) {
-            session()->setFlashdata('error', 'Akses Ditolak: Anda tidak memiliki izin untuk halaman tersebut!');
-            return redirect()->to('/panel/dashboard');
+        // Jika route memiliki argument (syarat nama modul), cek apakah user punya akses
+        if ($arguments) {
+            $hasAccess = false;
+
+            foreach ($arguments as $modul) {
+                if (in_array($modul, $userAccess)) {
+                    $hasAccess = true;
+                    break;
+                }
+            }
+
+            if (!$hasAccess) {
+                session()->setFlashdata('error', 'Akses Ditolak: Anda tidak memiliki izin untuk membuka halaman tersebut!');
+                return redirect()->to('/panel/dashboard');
+            }
         }
     }
 

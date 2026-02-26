@@ -37,80 +37,108 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
     $routes->get('logout', 'Auth::logout');
 
     // --- ROUTE WAJIB LOGIN (Filter: auth) ---
+    // Semua rute di dalam grup ini wajib login terlebih dahulu
     $routes->group('', ['filter' => 'auth'], static function ($routes) {
 
-        // 1. SEMUA ROLE BISA AKSES (Admin, Guru, Kepsek)
+        // 1. AKSES UMUM (Semua user yang berhasil login pasti bisa mengakses ini)
         $routes->get('/', 'Dashboard::index');
         $routes->get('dashboard', 'Dashboard::index');
 
-        // --- ROUTE PROFIL SAYA (UBAH PASSWORD) ---
         $routes->get('my-profile', 'MyProfile::index');
         $routes->post('my-profile/update', 'MyProfile::update');
 
-        // Kotak Masuk (Pesan)
-        $routes->get('pesan', 'Pesan::index');
-        $routes->get('pesan/baca/(:num)', 'Pesan::baca/$1');
-        $routes->get('pesan/delete/(:num)', 'Pesan::delete/$1');
 
-        // 2. HANYA ADMIN & GURU (Filter: role:admin,guru)
-        $routes->group('', ['filter' => 'role:admin,guru'], static function ($routes) {
+        // ====================================================================
+        // 2. AKSES MODUL DINAMIS (Dibatasi berdasarkan checklist Role di Database)
+        // ====================================================================
 
-            // CRUD Berita
-            $routes->get('berita', 'Berita::index');
-            $routes->get('berita/create', 'Berita::create');
-            $routes->post('berita/store', 'Berita::store');
-            $routes->get('berita/edit/(:num)', 'Berita::edit/$1');
-            $routes->post('berita/update/(:num)', 'Berita::update/$1');
-            $routes->get('berita/delete/(:num)', 'Berita::delete/$1');
-
-            // CRUD Galeri
-            $routes->get('galeri', 'Galeri::index');
-            $routes->get('galeri/create', 'Galeri::create');
-            $routes->post('galeri/store', 'Galeri::store');
-            $routes->get('galeri/edit/(:num)', 'Galeri::edit/$1');
-            $routes->post('galeri/update/(:num)', 'Galeri::update/$1');
-            $routes->get('galeri/delete/(:num)', 'Galeri::delete/$1');
+        // MODUL KOTAK MASUK (PESAN)
+        $routes->group('pesan', ['filter' => 'role:pesan'], static function ($routes) {
+            $routes->get('/', 'Pesan::index');
+            $routes->get('baca/(:num)', 'Pesan::baca/$1');
+            $routes->get('delete/(:num)', 'Pesan::delete/$1');
         });
 
-        // 3. HANYA ADMIN UTAMA (Filter: role:admin)
-        $routes->group('', ['filter' => 'role:admin'], static function ($routes) {
+        // MODUL BERITA
+        $routes->group('berita', ['filter' => 'role:berita'], static function ($routes) {
+            $routes->get('/', 'Berita::index');
+            $routes->get('create', 'Berita::create');
+            $routes->post('store', 'Berita::store');
+            $routes->get('edit/(:num)', 'Berita::edit/$1');
+            $routes->post('update/(:num)', 'Berita::update/$1');
+            $routes->get('delete/(:num)', 'Berita::delete/$1');
+        });
 
-            // --- ROUTE PENGATURAN WEB ---
-            $routes->get('setting', 'Setting::index');
-            $routes->post('setting/update', 'Setting::update');
+        // MODUL GALERI
+        $routes->group('galeri', ['filter' => 'role:galeri'], static function ($routes) {
+            $routes->get('/', 'Galeri::index');
+            $routes->get('create', 'Galeri::create');
+            $routes->post('store', 'Galeri::store');
+            $routes->get('edit/(:num)', 'Galeri::edit/$1');
+            $routes->post('update/(:num)', 'Galeri::update/$1');
+            $routes->get('delete/(:num)', 'Galeri::delete/$1');
+        });
 
-            $routes->post('setting/toggle-maintenance', 'Setting::toggleMaintenance');
+        // MODUL PENGATURAN WEB
+        $routes->group('setting', ['filter' => 'role:setting'], static function ($routes) {
+            $routes->get('/', 'Setting::index');
+            $routes->post('update', 'Setting::update');
+            $routes->post('toggle-maintenance', 'Setting::toggleMaintenance');
+        });
 
-            // --- ROUTE PROFIL SEKOLAH ---
-            $routes->get('profil', 'Profil::index');
-            $routes->post('profil/update', 'Profil::update');
+        // MODUL PROFIL SEKOLAH
+        $routes->group('profil', ['filter' => 'role:profil'], static function ($routes) {
+            $routes->get('/', 'Profil::index');
+            $routes->post('update', 'Profil::update');
+        });
 
-            $routes->get('hero', 'Setting::hero');
-            $routes->post('hero/update', 'Setting::updateHero');
+        // MODUL HERO SECTION (Banner)
+        $routes->group('hero', ['filter' => 'role:hero'], static function ($routes) {
+            $routes->get('/', 'Setting::hero');
+            $routes->post('update', 'Setting::updateHero');
+        });
 
-            // CRUD Jurusan
-            $routes->get('jurusan', 'Jurusan::index');
-            $routes->get('jurusan/create', 'Jurusan::create');
-            $routes->post('jurusan/store', 'Jurusan::store');
-            $routes->get('jurusan/edit/(:num)', 'Jurusan::edit/$1');
-            $routes->post('jurusan/update/(:num)', 'Jurusan::update/$1');
-            $routes->get('jurusan/delete/(:num)', 'Jurusan::delete/$1');
+        // MODUL JURUSAN
+        $routes->group('jurusan', ['filter' => 'role:jurusan'], static function ($routes) {
+            $routes->get('/', 'Jurusan::index');
+            $routes->get('create', 'Jurusan::create');
+            $routes->post('store', 'Jurusan::store');
+            $routes->get('edit/(:num)', 'Jurusan::edit/$1');
+            $routes->post('update/(:num)', 'Jurusan::update/$1');
+            $routes->get('delete/(:num)', 'Jurusan::delete/$1');
+        });
 
-            // CRUD Users (Pengguna)
-            $routes->get('users', 'Users::index');
-            $routes->get('users/create', 'Users::create');
-            $routes->post('users/store', 'Users::store');
-            $routes->get('users/edit/(:num)', 'Users::edit/$1');
-            $routes->post('users/update/(:num)', 'Users::update/$1');
-            $routes->get('users/delete/(:num)', 'Users::delete/$1');
+        // MODUL MITRA INDUSTRI
+        $routes->group('mitra', ['filter' => 'role:mitra'], static function ($routes) {
+            $routes->get('/', 'Mitra::index');
+            $routes->post('store', 'Mitra::store');
+            $routes->post('update/(:num)', 'Mitra::update/$1');
+            $routes->get('delete/(:num)', 'Mitra::delete/$1');
+        });
 
-            // --- ROUTE MITRA INDUSTRI ---
-            $routes->get('mitra', 'Mitra::index');
-            $routes->post('mitra/store', 'Mitra::store');
-            $routes->post('mitra/update/(:num)', 'Mitra::update/$1'); // Rute Edit Baru
-            $routes->get('mitra/delete/(:num)', 'Mitra::delete/$1');
+        // MODUL MANAJEMEN PENGGUNA (USERS)
+        $routes->group('users', ['filter' => 'role:users'], static function ($routes) {
+            $routes->get('/', 'Users::index');
+            $routes->get('create', 'Users::create');
+            $routes->post('store', 'Users::store');
+            $routes->get('edit/(:num)', 'Users::edit/$1');
+            $routes->post('update/(:num)', 'Users::update/$1');
+            $routes->get('delete/(:num)', 'Users::delete/$1');
+        });
 
-            $routes->get('log', 'LogActivity::index');
+        // MODUL HAK AKSES (ROLES) -> Fitur baru
+        $routes->group('roles', ['filter' => 'role:roles'], static function ($routes) {
+            $routes->get('/', 'Roles::index');
+            $routes->get('create', 'Roles::create');
+            $routes->post('store', 'Roles::store');
+            $routes->get('edit/(:segment)', 'Roles::edit/$1');
+            $routes->post('update/(:segment)', 'Roles::update/$1');
+            $routes->get('delete/(:segment)', 'Roles::delete/$1');
+        });
+
+        // MODUL LOG AKTIVITAS
+        $routes->group('log', ['filter' => 'role:log'], static function ($routes) {
+            $routes->get('/', 'LogActivity::index');
         });
     });
 });
