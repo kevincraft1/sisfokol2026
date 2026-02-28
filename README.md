@@ -55,6 +55,7 @@ composer install
 ```
 
 **3. Konfigurasi Environment**
+
 Duplikat file **env** menjadi **.env**, lalu sesuaikan konfigurasi berikut:
 ```bash
 # Ubah ke development saat tahap pengembangan
@@ -71,9 +72,19 @@ database.default.password =
 database.default.DBDriver = MySQLi
 ```
 **4. Migrasi dan Seeding Database**
+
 Buat database kosong bernama **db_sisfokol2026** di MySQL/MariaDB Anda. Kemudian jalankan perintah migrasi dan seeder untuk membuat tabel dan akun default:
 ```bash
 php spark migrate
 php spark db:seed RolesSeeder
 php spark db:seed UserSeeder
 ```
+**5. Jalankan Server Lokal**
+```bash
+php spark serve
+```
+Aplikasi frontend dapat diakses di: http://localhost:8080
+
+**📄 Lisensi**
+
+Proyek ini menggunakan lisensi MIT. Lihat file LICENSE untuk informasi lebih lanjut.
