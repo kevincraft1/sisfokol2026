@@ -11,8 +11,6 @@ Sisfokol 2026 adalah aplikasi web Sistem Informasi Manajemen terpadu untuk insti
 
 ### Frontend (Portal Publik)
 
-<<<<<<< HEAD
-
 - **Beranda & Profil:** Menampilkan informasi umum dan profil institusi.
 - **Berita & Artikel:** Publikasi pengumuman dan berita terbaru.
 - **Galeri:** Etalase dokumentasi kegiatan dan fasilitas.
@@ -39,6 +37,7 @@ Sisfokol 2026 adalah aplikasi web Sistem Informasi Manajemen terpadu untuk insti
 ## 📋 Persyaratan Sistem
 
 Pastikan lingkungan server/lokal Anda memenuhi persyaratan berikut:
+
 - **PHP** versi 7.4 atau lebih baru (Disarankan PHP 8.x)
 - **Composer** terinstal
 - **Database:** MySQL (versi 5.1+) atau MariaDB
@@ -101,13 +100,12 @@ Aplikasi frontend dapat diakses di: <http://localhost:8080>
 
 ### You can Hire Me
 
-* **Name** : Kevinecraft
+- **Name** : Kevinecraft
+
 - **Instagram** : [@kevinecraft](https://www.instagram.com/kevinecraft)
 - **YouTube** : [@nurindraid](https://www.youtube.com/@nurindraid)
 
 ## 📄 Lisensi
-
-=======
 
 - **Beranda & Profil:** Menampilkan informasi umum dan profil institusi.
 - **Berita & Artikel:** Publikasi pengumuman dan berita terbaru.
@@ -205,5 +203,4 @@ Aplikasi frontend dapat diakses di: <http://localhost:8080>
 
 ## 📄 Lisensi
 
->>>>>>> 7a89817 (Fix(Security): Implementasi proteksi CSRF Global, perbaikan bug Maintenance Mode, dan konversi aksi Delete/Restore/Purge dari GET menjadi POST Form untuk mencegah kerentanan CSRF.)
 Proyek ini menggunakan lisensi MIT. Lihat file [LICENSE](https://github.com/kevincraft1/sisfokol2026?tab=MIT-1-ov-file) untuk informasi lebih lanjut.
