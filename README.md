@@ -85,6 +85,12 @@ php spark serve
 ```
 Aplikasi frontend dapat diakses di: http://localhost:8080
 
+## 👨‍💻 Author
+
+* **Name** : Kevinecraft
+* **Instagram** : [@kevinecraft](https://www.instagram.com/kevinecraft)
+* **YouTube** : [@nurindraid](https://www.youtube.com/@nurindraid)
+
 ## 📄 Lisensi
 
 Proyek ini menggunakan lisensi MIT. Lihat file LICENSE untuk informasi lebih lanjut.
