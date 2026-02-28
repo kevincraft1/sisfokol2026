@@ -33,11 +33,20 @@
                             <a href="<?= base_url('panel/roles/edit/' . $r['slug_role']); ?>" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition text-xs font-medium">
                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
-                            <button type="button"
-                                <?= !$isAdmin ? "onclick=\"confirmDelete('" . base_url('panel/roles/delete/' . $r['slug_role']) . "')\"" : "" ?>
-                                class="px-3 py-1.5 rounded transition text-xs font-medium <?= $isAdmin ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-red-50 text-red-600 hover:bg-red-100'; ?>">
-                                <i class="fa-solid fa-trash"></i> Hapus
-                            </button>
+
+                            <?php if (!$isAdmin): ?>
+                                <form action="<?= base_url('panel/roles/delete/' . $r['slug_role']); ?>" method="post" class="inline" id="form-delete-<?= $r['slug_role']; ?>">
+                                    <?= csrf_field() ?>
+                                    <button type="button" onclick="confirmDelete('<?= $r['slug_role']; ?>')" class="px-3 py-1.5 rounded transition text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <button type="button" disabled class="px-3 py-1.5 rounded transition text-xs font-medium bg-gray-100 text-gray-400 cursor-not-allowed">
+                                    <i class="fa-solid fa-trash"></i> Hapus
+                                </button>
+                            <?php endif; ?>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -47,7 +56,7 @@
 </div>
 
 <script>
-    function confirmDelete(url) {
+    function confirmDelete(slug) {
         Swal.fire({
             title: 'Hapus Role?',
             text: "Data tidak bisa dikembalikan!",
@@ -57,7 +66,9 @@
             cancelButtonColor: '#ef4444',
             confirmButtonText: 'Ya, Hapus!'
         }).then((result) => {
-            if (result.isConfirmed) window.location.href = url;
+            if (result.isConfirmed) {
+                document.getElementById('form-delete-' + slug).submit();
+            }
         });
     }
 </script>

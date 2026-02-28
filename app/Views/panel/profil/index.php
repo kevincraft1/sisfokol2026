@@ -22,7 +22,7 @@
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
     <form action="<?= base_url('panel/profil/update'); ?>" method="POST" enctype="multipart/form-data">
-
+        <?= csrf_field() ?>
         <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-2">Sejarah Singkat / Pengantar</label>
             <textarea name="sejarah" rows="3" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"><?= $profil['sejarah']; ?></textarea>

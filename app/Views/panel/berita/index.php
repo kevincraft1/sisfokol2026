@@ -89,9 +89,12 @@
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
 
-                        <button type="button" onclick="confirmDelete('<?= base_url('panel/berita/delete/' . $b['id']); ?>')" class="text-red-500 hover:text-red-700 transition" title="Hapus">
-                            <i class="fa-solid fa-trash"></i> Hapus
-                        </button>
+                        <form action="<?= base_url('panel/berita/delete/' . $b['id']); ?>" method="post" class="inline" id="form-delete-<?= $b['id']; ?>">
+                            <?= csrf_field() ?>
+                            <button type="button" onclick="confirmDelete(<?= $b['id']; ?>)" class="text-red-500 hover:text-red-700 transition" title="Hapus">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -106,7 +109,7 @@
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Pindahkan ke Tong Sampah?',
             text: "Berita ini akan dipindahkan ke Tong Sampah dan otomatis terhapus permanen setelah 30 hari.",
@@ -119,7 +122,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                document.getElementById('form-delete-' + id).submit();
             }
         });
     }

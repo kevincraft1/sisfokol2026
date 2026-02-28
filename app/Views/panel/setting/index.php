@@ -8,7 +8,7 @@
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
     <form action="<?= base_url('panel/setting/update'); ?>" method="POST" enctype="multipart/form-data">
-
+        <?= csrf_field() ?>
         <h3 class="text-lg font-bold text-indigo-700 mb-4 border-b pb-2"><i class="fa-solid fa-school mr-2"></i> Identitas Utama</h3>
         <div class="mb-8 p-4 bg-orange-50 border border-orange-200 rounded-lg">
             <label class="block text-sm font-bold text-orange-800 mb-2"><i class="fa-solid fa-person-digging mr-2"></i> Mode Maintenance (Perbaikan)</label>
@@ -202,7 +202,7 @@
             const statusVal = this.value;
             const formData = new FormData();
             formData.append('status', statusVal);
-
+            formData.append('<?= csrf_token() ?>', '<?= csrf_hash() ?>');
             // Ganti warna background select box agar terlihat interaktif
             this.style.opacity = '0.5';
 

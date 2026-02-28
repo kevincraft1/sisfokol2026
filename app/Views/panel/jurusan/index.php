@@ -39,9 +39,13 @@
                         <a href="<?= base_url('panel/jurusan/edit/' . $j['id']); ?>" class="text-blue-500 hover:text-blue-700 transition" title="Edit">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
-                        <button type="button" onclick="confirmDelete('<?= base_url('panel/jurusan/delete/' . $j['id']); ?>')" class="text-red-500 hover:text-red-700 transition" title="Hapus">
-                            <i class="fa-solid fa-trash"></i> Hapus
-                        </button>
+
+                        <form action="<?= base_url('panel/jurusan/delete/' . $j['id']); ?>" method="post" class="inline" id="form-delete-<?= $j['id']; ?>">
+                            <?= csrf_field() ?>
+                            <button type="button" onclick="confirmDelete(<?= $j['id']; ?>)" class="text-red-500 hover:text-red-700 transition" title="Hapus">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -56,7 +60,7 @@
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Apakah Anda yakin?',
             text: "Data jurusan ini akan dihapus permanen!",
@@ -69,7 +73,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                document.getElementById('form-delete-' + id).submit();
             }
         });
     }

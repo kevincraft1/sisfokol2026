@@ -52,6 +52,7 @@
                     <h4 class="fw-bold mb-4">Kirim Pesan</h4>
 
                     <form action="<?= base_url('kirim-pesan'); ?>" method="POST">
+                        <?= csrf_field() ?>
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-medium">Nama Lengkap</label>

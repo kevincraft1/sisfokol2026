@@ -29,13 +29,13 @@
                     <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                         <td class="py-4 px-6 text-gray-600"><?= $no++; ?></td>
                         <td class="py-4 px-6 flex items-center space-x-3">
-                            <img src="https://ui-avatars.com/api/?name=<?= $u['nama_lengkap']; ?>&background=random&color=fff" class="w-10 h-10 rounded-full">
+                            <img src="https://ui-avatars.com/api/?name=<?= esc($u['nama_lengkap']); ?>&background=random&color=fff" class="w-10 h-10 rounded-full">
                             <div>
-                                <p class="font-bold text-gray-800"><?= $u['nama_lengkap']; ?></p>
-                                <p class="text-xs text-gray-500"><?= $u['email']; ?></p>
+                                <p class="font-bold text-gray-800"><?= esc($u['nama_lengkap']); ?></p>
+                                <p class="text-xs text-gray-500"><?= esc($u['email']); ?></p>
                             </div>
                         </td>
-                        <td class="py-4 px-6 text-gray-600">@<?= $u['username']; ?></td>
+                        <td class="py-4 px-6 text-gray-600">@<?= esc($u['username']); ?></td>
                         <td class="py-4 px-6 capitalize">
                             <?php if ($u['role'] == 'admin'): ?>
                                 <span class="px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">Admin</span>
@@ -49,9 +49,14 @@
                             <a href="<?= base_url('panel/users/edit/' . $u['id']); ?>" class="px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 transition text-xs font-medium">
                                 <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
-                            <button type="button" onclick="confirmDelete('<?= base_url('panel/users/delete/' . $u['id']); ?>')" class="px-3 py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition text-xs font-medium <?= $u['id'] == session()->get('id') ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?= $u['id'] == session()->get('id') ? 'disabled' : ''; ?>>
-                                <i class="fa-solid fa-trash"></i> Hapus
-                            </button>
+
+                            <form action="<?= base_url('panel/users/delete/' . $u['id']); ?>" method="post" id="form-delete-<?= $u['id']; ?>">
+                                <?= csrf_field() ?>
+                                <button type="button" onclick="confirmDelete(<?= $u['id']; ?>)" class="px-3 py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition text-xs font-medium <?= $u['id'] == session()->get('id') ? 'opacity-50 cursor-not-allowed' : ''; ?>" <?= $u['id'] == session()->get('id') ? 'disabled' : ''; ?>>
+                                    <i class="fa-solid fa-trash"></i> Hapus
+                                </button>
+                            </form>
+
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -61,7 +66,7 @@
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Hapus Pengguna?',
             text: "Data pengguna ini tidak bisa dikembalikan!",
@@ -74,7 +79,8 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                // Submit form berdasarkan ID form yang unik
+                document.getElementById('form-delete-' + id).submit();
             }
         });
     }

@@ -8,7 +8,7 @@
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-3xl">
     <form action="<?= base_url('panel/galeri/store'); ?>" method="POST" enctype="multipart/form-data">
-
+        <?= csrf_field() ?>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Judul Foto</label>

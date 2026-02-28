@@ -84,9 +84,13 @@
                         <a href="<?= base_url('panel/galeri/edit/' . $g['id']); ?>" class="text-blue-500 hover:text-blue-700 transition" title="Edit">
                             <i class="fa-solid fa-pen-to-square"></i> Edit
                         </a>
-                        <button type="button" onclick="confirmDelete('<?= base_url('panel/galeri/delete/' . $g['id']); ?>')" class="text-red-500 hover:text-red-700 transition" title="Hapus">
-                            <i class="fa-solid fa-trash"></i> Hapus
-                        </button>
+
+                        <form action="<?= base_url('panel/galeri/delete/' . $g['id']); ?>" method="post" class="inline" id="form-delete-<?= $g['id']; ?>">
+                            <?= csrf_field() ?>
+                            <button type="button" onclick="confirmDelete(<?= $g['id']; ?>)" class="text-red-500 hover:text-red-700 transition" title="Hapus">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -101,20 +105,20 @@
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Pindahkan ke Tong Sampah?',
             text: "Foto galeri ini akan dipindahkan ke Tong Sampah dan otomatis terhapus permanen setelah 30 hari.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#f59e0b', // Warna orange/amber untuk peringatan soft delete
-            cancelButtonColor: '#6b7280', // Warna abu-abu untuk batal
+            confirmButtonColor: '#f59e0b',
+            cancelButtonColor: '#6b7280',
             confirmButtonText: '<i class="fa-solid fa-trash-arrow-up mr-1"></i> Ya, Pindahkan!',
             cancelButtonText: 'Batal',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                document.getElementById('form-delete-' + id).submit();
             }
         });
     }

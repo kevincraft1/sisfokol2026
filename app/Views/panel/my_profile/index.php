@@ -21,7 +21,7 @@
 
     <div class="md:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
         <form action="<?= base_url('panel/my-profile/update'); ?>" method="POST">
-
+            <?= csrf_field() ?>
             <h4 class="text-md font-bold text-indigo-700 mb-4 border-b pb-2"><i class="fa-solid fa-address-card mr-2"></i> Informasi Dasar</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>

@@ -42,9 +42,13 @@
                             <a href="<?= base_url('panel/pesan/baca/' . $p['id']); ?>" class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition text-xs font-medium">
                                 Baca Pesan
                             </a>
-                            <button type="button" onclick="confirmDelete('<?= base_url('panel/pesan/delete/' . $p['id']); ?>')" class="px-3 py-1.5 bg-red-100 text-red-700 rounded hover:bg-red-200 transition text-xs font-medium">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+
+                            <form action="<?= base_url('panel/pesan/delete/' . $p['id']); ?>" method="post" class="inline" id="form-delete-<?= $p['id']; ?>">
+                                <?= csrf_field() ?>
+                                <button type="button" onclick="confirmDelete(<?= $p['id']; ?>)" class="px-3 py-1.5 bg-red-100 text-red-700 rounded hover:bg-red-200 transition text-xs font-medium">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -60,7 +64,7 @@
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Hapus Pesan?',
             text: "Pesan ini akan dihapus permanen!",
@@ -73,7 +77,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                document.getElementById('form-delete-' + id).submit();
             }
         });
     }

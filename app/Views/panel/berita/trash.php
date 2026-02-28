@@ -72,13 +72,21 @@
                         <?= date('d M Y H:i', strtotime($b['deleted_at'])); ?>
                     </td>
                     <td class="py-3 px-4 flex space-x-3 items-center mt-2">
-                        <a href="<?= base_url('panel/berita/restore/' . $b['id']); ?>" class="text-green-600 hover:text-green-800 transition font-medium" title="Pulihkan Data">
-                            <i class="fa-solid fa-recycle"></i> Restore
-                        </a>
 
-                        <button type="button" onclick="confirmPurge('<?= base_url('panel/berita/purge/' . $b['id']); ?>')" class="text-red-600 hover:text-red-800 transition font-medium ml-3" title="Hapus Selamanya">
-                            <i class="fa-solid fa-fire"></i> Hapus Permanen
-                        </button>
+                        <form action="<?= base_url('panel/berita/restore/' . $b['id']); ?>" method="post" class="inline">
+                            <?= csrf_field() ?>
+                            <button type="submit" class="text-green-600 hover:text-green-800 transition font-medium" title="Pulihkan Data">
+                                <i class="fa-solid fa-recycle"></i> Restore
+                            </button>
+                        </form>
+
+                        <form action="<?= base_url('panel/berita/purge/' . $b['id']); ?>" method="post" class="inline" id="form-purge-<?= $b['id']; ?>">
+                            <?= csrf_field() ?>
+                            <button type="button" onclick="confirmPurge(<?= $b['id']; ?>)" class="text-red-600 hover:text-red-800 transition font-medium ml-3" title="Hapus Selamanya">
+                                <i class="fa-solid fa-fire"></i> Hapus Permanen
+                            </button>
+                        </form>
+
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -98,20 +106,20 @@
 </div>
 
 <script>
-    function confirmPurge(deleteUrl) {
+    function confirmPurge(id) {
         Swal.fire({
             title: 'Hapus Permanen?',
             text: "Tindakan ini tidak dapat dibatalkan! File gambar fisik juga akan dihapus dari server.",
             icon: 'error',
             showCancelButton: true,
-            confirmButtonColor: '#dc2626', // Merah gelap
+            confirmButtonColor: '#dc2626',
             cancelButtonColor: '#6b7280',
             confirmButtonText: '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Ya, Musnahkan!',
             cancelButtonText: 'Batal',
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                document.getElementById('form-purge-' + id).submit();
             }
         });
     }

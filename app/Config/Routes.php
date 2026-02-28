@@ -56,7 +56,7 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
         $routes->group('pesan', ['filter' => 'role:pesan'], static function ($routes) {
             $routes->get('/', 'Pesan::index');
             $routes->get('baca/(:num)', 'Pesan::baca/$1');
-            $routes->get('delete/(:num)', 'Pesan::delete/$1');
+            $routes->post('delete/(:num)', 'Pesan::delete/$1'); // Ubah ke POST
         });
 
         // MODUL BERITA
@@ -66,12 +66,12 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->post('store', 'Berita::store');
             $routes->get('edit/(:num)', 'Berita::edit/$1');
             $routes->post('update/(:num)', 'Berita::update/$1');
-            $routes->get('delete/(:num)', 'Berita::delete/$1');
+            $routes->post('delete/(:num)', 'Berita::delete/$1'); // Ubah ke POST
 
             // --- TAMBAHAN TAHAP 3: TONG SAMPAH BERITA ---
             $routes->get('trash', 'Berita::trash');
-            $routes->get('restore/(:num)', 'Berita::restore/$1');
-            $routes->get('purge/(:num)', 'Berita::purge/$1');
+            $routes->post('restore/(:num)', 'Berita::restore/$1'); // Ubah ke POST
+            $routes->post('purge/(:num)', 'Berita::purge/$1');     // Ubah ke POST
         });
 
         // MODUL GALERI
@@ -81,12 +81,12 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->post('store', 'Galeri::store');
             $routes->get('edit/(:num)', 'Galeri::edit/$1');
             $routes->post('update/(:num)', 'Galeri::update/$1');
-            $routes->get('delete/(:num)', 'Galeri::delete/$1');
+            $routes->post('delete/(:num)', 'Galeri::delete/$1'); // Ubah ke POST
 
             // --- TAMBAHAN TAHAP 3: TONG SAMPAH GALERI ---
             $routes->get('trash', 'Galeri::trash');
-            $routes->get('restore/(:num)', 'Galeri::restore/$1');
-            $routes->get('purge/(:num)', 'Galeri::purge/$1');
+            $routes->post('restore/(:num)', 'Galeri::restore/$1'); // Ubah ke POST
+            $routes->post('purge/(:num)', 'Galeri::purge/$1');     // Ubah ke POST
         });
 
         // MODUL PENGATURAN WEB
@@ -115,7 +115,7 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->post('store', 'Jurusan::store');
             $routes->get('edit/(:num)', 'Jurusan::edit/$1');
             $routes->post('update/(:num)', 'Jurusan::update/$1');
-            $routes->get('delete/(:num)', 'Jurusan::delete/$1');
+            $routes->post('delete/(:num)', 'Jurusan::delete/$1'); // Ubah ke POST
         });
 
         // MODUL MITRA INDUSTRI
@@ -123,7 +123,7 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->get('/', 'Mitra::index');
             $routes->post('store', 'Mitra::store');
             $routes->post('update/(:num)', 'Mitra::update/$1');
-            $routes->get('delete/(:num)', 'Mitra::delete/$1');
+            $routes->post('delete/(:num)', 'Mitra::delete/$1'); // Ubah ke POST
         });
 
         // MODUL MANAJEMEN PENGGUNA (USERS)
@@ -133,7 +133,7 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->post('store', 'Users::store');
             $routes->get('edit/(:num)', 'Users::edit/$1');
             $routes->post('update/(:num)', 'Users::update/$1');
-            $routes->get('delete/(:num)', 'Users::delete/$1');
+            $routes->post('delete/(:num)', 'Users::delete/$1'); // Ubah ke POST
         });
 
         // MODUL HAK AKSES (ROLES) -> Fitur baru
@@ -143,7 +143,7 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->post('store', 'Roles::store');
             $routes->get('edit/(:segment)', 'Roles::edit/$1');
             $routes->post('update/(:segment)', 'Roles::update/$1');
-            $routes->get('delete/(:segment)', 'Roles::delete/$1');
+            $routes->post('delete/(:segment)', 'Roles::delete/$1'); // Ubah ke POST
         });
 
         // MODUL LOG AKTIVITAS

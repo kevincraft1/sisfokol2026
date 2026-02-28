@@ -119,7 +119,7 @@ class Setting extends BaseController
             'stat_mitra'     => $this->request->getPost('stat_mitra'),
             'stat_fasilitas' => $this->request->getPost('stat_fasilitas'),
             'stat_alumni'    => $this->request->getPost('stat_alumni'),
-            'is_maintenance' => $this->request->getPost('is_maintenance'),
+            // is_maintenance sengaja dihilangkan dari sini agar form utama tidak mereset nilai maintenance
             'logo'           => $namaLogo
         ];
 
@@ -135,7 +135,11 @@ class Setting extends BaseController
     public function toggleMaintenance()
     {
         $settingLama = $this->settingModel->first();
-        $status = $this->request->getPost('status');
+
+        // PERBAIKAN: Validasi ketat, pastikan nilainya hanya integer 1 atau 0
+        $statusInput = $this->request->getPost('status');
+        $status = ($statusInput == 1) ? 1 : 0;
+
         $newData = ['is_maintenance' => $status];
 
         $this->settingModel->update(1, $newData);

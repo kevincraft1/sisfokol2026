@@ -35,14 +35,18 @@
         <a href="mailto:<?= $pesan['email']; ?>?subject=Balasan: <?= $pesan['subject']; ?>" class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition flex items-center shadow-sm">
             <i class="fa-solid fa-reply mr-2"></i> Balas via Email
         </a>
-        <button onclick="confirmDelete('<?= base_url('panel/pesan/delete/' . $pesan['id']); ?>')" class="bg-red-50 text-red-600 px-6 py-2.5 rounded-lg font-medium hover:bg-red-100 transition flex items-center border border-red-100">
-            <i class="fa-solid fa-trash mr-2"></i> Hapus Pesan
-        </button>
+
+        <form action="<?= base_url('panel/pesan/delete/' . $pesan['id']); ?>" method="post" id="form-delete-<?= $pesan['id']; ?>" class="inline">
+            <?= csrf_field() ?>
+            <button type="button" onclick="confirmDelete(<?= $pesan['id']; ?>)" class="bg-red-50 text-red-600 px-6 py-2.5 rounded-lg font-medium hover:bg-red-100 transition flex items-center border border-red-100">
+                <i class="fa-solid fa-trash mr-2"></i> Hapus Pesan
+            </button>
+        </form>
     </div>
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmDelete(id) {
         Swal.fire({
             title: 'Hapus Pesan?',
             text: "Pesan ini akan dihapus permanen!",
@@ -55,7 +59,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = deleteUrl;
+                document.getElementById('form-delete-' + id).submit();
             }
         });
     }

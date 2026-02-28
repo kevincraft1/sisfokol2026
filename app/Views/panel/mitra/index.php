@@ -23,9 +23,12 @@
                 <button onclick="editMitra(<?= $m['id']; ?>, '<?= addslashes($m['nama']); ?>', '<?= addslashes($m['url']); ?>')" class="bg-amber-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-amber-600">
                     <i class="fa-solid fa-pen text-xs"></i>
                 </button>
-                <a href="<?= base_url('panel/mitra/delete/' . $m['id']); ?>" onclick="return confirm('Hapus mitra ini?')" class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-red-600">
-                    <i class="fa-solid fa-trash text-xs"></i>
-                </a>
+                <form action="<?= base_url('panel/mitra/delete/' . $m['id']); ?>" method="post" class="inline" onsubmit="return confirm('Hapus mitra ini secara permanen?');">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg hover:bg-red-600 cursor-pointer">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+                </form>
             </div>
         </div>
     <?php endforeach; ?>

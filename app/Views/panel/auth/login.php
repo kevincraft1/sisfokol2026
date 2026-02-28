@@ -54,6 +54,7 @@
         <?php endif; ?>
 
         <form action="<?= base_url('panel/auth/process') ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="mb-5">
                 <label class="block text-sm font-semibold text-gray-700 mb-1.5" for="login_id">Username / Email</label>
                 <input type="text" name="login_id" id="login_id" required
