@@ -47,10 +47,12 @@ Ikuti langkah-langkah berikut untuk menjalankan aplikasi di komputer lokal:
 **1. Clone Repositori**
 ```bash
 git clone [https://github.com/username/sisfokol2026.git](https://github.com/username/sisfokol2026.git)
+```
 
 **2. Install Dependensi**
 ```bash
 composer install
+```
 
 **3. Konfigurasi Environment**
 
