@@ -1,96 +1,70 @@
-# Sisfokol 2026 - Sistem Informasi Sekolah & Kampus
+# CodeIgniter 4 Application Starter
 
-![CodeIgniter](https://img.shields.io/badge/CodeIgniter-4.x-EF4223?style=for-the-badge&logo=codeigniter)
-![PHP](https://img.shields.io/badge/PHP-8.x-777BB4?style=for-the-badge&logo=php)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+## What is CodeIgniter?
 
-Sisfokol 2026 adalah aplikasi web Sistem Informasi Manajemen terpadu untuk institusi pendidikan (Sekolah/Fakultas). Dibangun menggunakan framework CodeIgniter 4, aplikasi ini dirancang untuk mengelola portal informasi publik dan dilengkapi dengan Panel Administrator yang aman berbasis Role-Based Access Control (RBAC).
+CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
+More information can be found at the [official site](https://codeigniter.com).
 
-## 🚀 Fitur Utama
+This repository holds a composer-installable app starter.
+It has been built from the
+[development repository](https://github.com/codeigniter4/CodeIgniter4).
 
-### Frontend (Portal Publik)
-- **Beranda & Profil:** Menampilkan informasi umum dan profil institusi.
-- **Berita & Artikel:** Publikasi pengumuman dan berita terbaru.
-- **Galeri:** Etalase dokumentasi kegiatan dan fasilitas.
-- **Program Studi / Jurusan:** Informasi detail mengenai jurusan yang tersedia.
-- **Kontak & Pesan:** Formulir interaktif bagi pengunjung untuk mengirim pesan.
+More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
 
-### Backend (Panel Administrator)
-- **Autentikasi & Otorisasi:** Sistem login dengan perlindungan CSRF dan manajemen sesi.
-- **Manajemen Pengguna & Peran (RBAC):** Mengelola akun pengguna dan mendefinisikan hak akses berdasarkan *role* (Administrator, Editor, dll).
-- **Manajemen Konten:**
-  - **Berita:** CRUD (Create, Read, Update, Delete) dengan fitur *Soft Delete* (Trash/Restore).
-  - **Galeri:** Manajemen foto dengan format WebP teroptimasi.
-  - **Jurusan:** Pengelolaan data program studi.
-  - **Mitra:** Manajemen logo dan data kemitraan.
-- **Manajemen Interaksi:**
-  - **Pesan (Inbox):** Membaca dan mengelola pesan masuk dari publik.
-- **Pengaturan Sistem:**
-  - **Setting Global:** Konfigurasi nama website, logo, favicon, dan identitas aplikasi.
-  - **Profil Pengguna (My Profile):** Pembaruan data pribadi akun admin.
-- **Keamanan & Audit:**
-  - **Log Aktivitas (Audit Trail):** Mencatat setiap perubahan data (siapa, apa, kapan) untuk pelacakan aktivitas sistem.
+You can read the [user guide](https://codeigniter.com/user_guide/)
+corresponding to the latest version of the framework.
 
-## 📋 Persyaratan Sistem
+## Installation & updates
 
-Pastikan lingkungan server/lokal Anda memenuhi persyaratan berikut:
-* **PHP** versi 7.4 atau lebih baru (Disarankan PHP 8.x)
-* **Composer** terinstal
-* **Database:** MySQL (versi 5.1+) atau MariaDB
-* Ekstensi PHP: `intl`, `mbstring`, `json`, `mysqlnd`, `xml`, `curl`, `gd` (untuk manipulasi gambar)
+`composer create-project codeigniter4/appstarter` then `composer update` whenever
+there is a new release of the framework.
 
-## 🛠️ Panduan Instalasi
+When updating, check the release notes to see if there are any changes you might need to apply
+to your `app` folder. The affected files can be copied or merged from
+`vendor/codeigniter4/framework/app`.
 
-Ikuti langkah-langkah berikut untuk menjalankan aplikasi di komputer lokal:
+## Setup
 
-**1. Clone Repositori**
-```bash
-git clone [https://github.com/username/sisfokol2026.git](https://github.com/username/sisfokol2026.git)
-```
+Copy `env` to `.env` and tailor for your app, specifically the baseURL
+and any database settings.
 
-**2. Install Dependensi**
-```bash
-composer install
-```
+## Important Change with index.php
 
-**3. Konfigurasi Environment**
+`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
+for better security and separation of components.
 
-Duplikat file **env** menjadi **.env**, lalu sesuaikan konfigurasi berikut:
-```bash
-# Ubah ke development saat tahap pengembangan
-CI_ENVIRONMENT = development
+This means that you should configure your web server to "point" to your project's *public* folder, and
+not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
+framework are exposed.
 
-# Konfigurasi URL Utama
-app.baseURL = 'http://localhost:8080/'
+**Please** read the user guide for a better explanation of how CI4 works!
 
-# Konfigurasi Database
-database.default.hostname = localhost
-database.default.database = db_sisfokol2026
-database.default.username = root
-database.default.password = 
-database.default.DBDriver = MySQLi
-```
-**4. Migrasi dan Seeding Database**
+## Repository Management
 
-Buat database kosong bernama **db_sisfokol2026** di MySQL/MariaDB Anda. Kemudian jalankan perintah migrasi dan seeder untuk membuat tabel dan akun default:
-```bash
-php spark migrate
-php spark db:seed RolesSeeder
-php spark db:seed UserSeeder
-```
-**5. Jalankan Server Lokal**
-```bash
-php spark serve
-```
-Aplikasi frontend dapat diakses di: http://localhost:8080
+We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
+We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
+FEATURE REQUESTS.
 
-## 👨‍💻 Author
-### You can Hire Me
-* **Name** : Kevinecraft
-* **Instagram** : [@kevinecraft](https://www.instagram.com/kevinecraft)
-* **YouTube** : [@nurindraid](https://www.youtube.com/@nurindraid)
+This repository is a "distribution" one, built by our release preparation script.
+Problems with it can be raised on our forum, or as issues in the main repository.
 
-## 📄 Lisensi
+## Server Requirements
 
-Proyek ini menggunakan lisensi MIT. Lihat file [LICENSE](https://github.com/kevincraft1/sisfokol2026?tab=MIT-1-ov-file) untuk informasi lebih lanjut.
+PHP version 8.2 or higher is required, with the following extensions installed:
+
+- [intl](http://php.net/manual/en/intl.requirements.php)
+- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+
+> [!WARNING]
+>
+> - The end of life date for PHP 7.4 was November 28, 2022.
+> - The end of life date for PHP 8.0 was November 26, 2023.
+> - The end of life date for PHP 8.1 was December 31, 2025.
+> - If you are still using below PHP 8.2, you should upgrade immediately.
+> - The end of life date for PHP 8.2 will be December 31, 2026.
+
+Additionally, make sure that the following extensions are enabled in your PHP:
+
+- json (enabled by default - don't turn it off)
+- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
+- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
