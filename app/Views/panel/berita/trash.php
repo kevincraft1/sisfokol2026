@@ -34,19 +34,12 @@
 
 <div class="flex justify-between items-center mb-6">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800"><?= $title; ?></h1>
-        <p class="text-sm text-gray-500 mt-1">Kelola semua artikel dan berita sekolah di sini.</p>
+        <h1 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-trash-can mr-2 text-red-500"></i><?= $title; ?></h1>
+        <p class="text-sm text-red-500 mt-1 font-medium">Perhatian: Item di Tong Sampah akan dihapus permanen secara otomatis setelah 30 hari.</p>
     </div>
-
-    <div class="flex space-x-3">
-        <a href="<?= base_url('panel/berita/trash'); ?>" class="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition shadow-sm flex items-center">
-            <i class="fa-solid fa-trash-can mr-2 text-red-500"></i> Tong Sampah
-        </a>
-
-        <a href="<?= base_url('panel/berita/create'); ?>" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition shadow-sm flex items-center">
-            <i class="fa-solid fa-plus mr-1"></i> Tambah Berita
-        </a>
-    </div>
+    <a href="<?= base_url('panel/berita'); ?>" class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition border border-gray-300">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Berita
+    </a>
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 overflow-x-auto">
@@ -56,41 +49,35 @@
                 <th class="py-3 px-4 font-semibold">No</th>
                 <th class="py-3 px-4 font-semibold">Thumbnail</th>
                 <th class="py-3 px-4 font-semibold">Judul Berita</th>
-                <th class="py-3 px-4 font-semibold">Kategori</th>
-                <th class="py-3 px-4 font-semibold">Status</th>
+                <th class="py-3 px-4 font-semibold">Waktu Dihapus</th>
                 <th class="py-3 px-4 font-semibold">Aksi</th>
             </tr>
         </thead>
         <tbody>
             <?php $no = 1;
             foreach ($berita as $b): ?>
-                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                <tr class="border-b border-gray-50 hover:bg-red-50 transition">
                     <td class="py-3 px-4 text-gray-600"><?= $no++; ?></td>
                     <td class="py-3 px-4">
                         <?php if ($b['image']): ?>
-                            <img src="<?= base_url('uploads/berita/' . $b['image']); ?>" alt="Thumbnail" class="w-12 h-12 object-cover rounded-lg border border-gray-200">
+                            <img src="<?= base_url('uploads/berita/' . $b['image']); ?>" alt="Thumbnail" class="w-12 h-12 object-cover rounded-lg border border-gray-200 grayscale opacity-70">
                         <?php else: ?>
                             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
                                 <i class="fa-solid fa-image"></i>
                             </div>
                         <?php endif; ?>
                     </td>
-                    <td class="py-3 px-4 font-medium text-gray-800"><?= $b['title']; ?></td>
-                    <td class="py-3 px-4 text-gray-600"><?= $b['category']; ?></td>
-                    <td class="py-3 px-4">
-                        <?php if ($b['status'] == 'published'): ?>
-                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">Dipublikasi</span>
-                        <?php else: ?>
-                            <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded-full">Draft</span>
-                        <?php endif; ?>
+                    <td class="py-3 px-4 font-medium text-gray-800 line-through decoration-gray-400"><?= $b['title']; ?></td>
+                    <td class="py-3 px-4 text-red-600 font-medium">
+                        <?= date('d M Y H:i', strtotime($b['deleted_at'])); ?>
                     </td>
                     <td class="py-3 px-4 flex space-x-3 items-center mt-2">
-                        <a href="<?= base_url('panel/berita/edit/' . $b['id']); ?>" class="text-blue-500 hover:text-blue-700 transition" title="Edit">
-                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        <a href="<?= base_url('panel/berita/restore/' . $b['id']); ?>" class="text-green-600 hover:text-green-800 transition font-medium" title="Pulihkan Data">
+                            <i class="fa-solid fa-recycle"></i> Restore
                         </a>
 
-                        <button type="button" onclick="confirmDelete('<?= base_url('panel/berita/delete/' . $b['id']); ?>')" class="text-red-500 hover:text-red-700 transition" title="Hapus">
-                            <i class="fa-solid fa-trash"></i> Hapus
+                        <button type="button" onclick="confirmPurge('<?= base_url('panel/berita/purge/' . $b['id']); ?>')" class="text-red-600 hover:text-red-800 transition font-medium ml-3" title="Hapus Selamanya">
+                            <i class="fa-solid fa-fire"></i> Hapus Permanen
                         </button>
                     </td>
                 </tr>
@@ -98,7 +85,12 @@
 
             <?php if (empty($berita)): ?>
                 <tr>
-                    <td colspan="6" class="py-6 text-center text-gray-500">Belum ada data berita. Mulai tambahkan berita pertama Anda!</td>
+                    <td colspan="5" class="py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-box-open text-4xl mb-3 text-gray-300"></i>
+                            <p>Tong sampah kosong. Tidak ada berita yang dihapus.</p>
+                        </div>
+                    </td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -106,15 +98,15 @@
 </div>
 
 <script>
-    function confirmDelete(deleteUrl) {
+    function confirmPurge(deleteUrl) {
         Swal.fire({
-            title: 'Pindahkan ke Tong Sampah?',
-            text: "Berita ini akan dipindahkan ke Tong Sampah dan otomatis terhapus permanen setelah 30 hari.",
-            icon: 'warning',
+            title: 'Hapus Permanen?',
+            text: "Tindakan ini tidak dapat dibatalkan! File gambar fisik juga akan dihapus dari server.",
+            icon: 'error',
             showCancelButton: true,
-            confirmButtonColor: '#f59e0b',
+            confirmButtonColor: '#dc2626', // Merah gelap
             cancelButtonColor: '#6b7280',
-            confirmButtonText: '<i class="fa-solid fa-trash-arrow-up mr-1"></i> Ya, Pindahkan!',
+            confirmButtonText: '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Ya, Musnahkan!',
             cancelButtonText: 'Batal',
             reverseButtons: true
         }).then((result) => {

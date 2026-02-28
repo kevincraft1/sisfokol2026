@@ -10,7 +10,10 @@ class UserModel extends Model
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
+
+    // REVISI: Aktifkan Soft Deletes
+    protected $useSoftDeletes   = true;
+
     protected $protectFields    = true;
     protected $allowedFields    = ['username', 'nama_lengkap', 'email', 'password_hash', 'role', 'avatar'];
 
@@ -19,4 +22,7 @@ class UserModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
+
+    // REVISI: Tambahkan field untuk Soft Deletes
+    protected $deletedField  = 'deleted_at';
 }

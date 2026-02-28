@@ -67,6 +67,11 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->get('edit/(:num)', 'Berita::edit/$1');
             $routes->post('update/(:num)', 'Berita::update/$1');
             $routes->get('delete/(:num)', 'Berita::delete/$1');
+
+            // --- TAMBAHAN TAHAP 3: TONG SAMPAH BERITA ---
+            $routes->get('trash', 'Berita::trash');
+            $routes->get('restore/(:num)', 'Berita::restore/$1');
+            $routes->get('purge/(:num)', 'Berita::purge/$1');
         });
 
         // MODUL GALERI
@@ -77,6 +82,11 @@ $routes->group('panel', ['namespace' => 'App\Controllers\Panel'], static functio
             $routes->get('edit/(:num)', 'Galeri::edit/$1');
             $routes->post('update/(:num)', 'Galeri::update/$1');
             $routes->get('delete/(:num)', 'Galeri::delete/$1');
+
+            // --- TAMBAHAN TAHAP 3: TONG SAMPAH GALERI ---
+            $routes->get('trash', 'Galeri::trash');
+            $routes->get('restore/(:num)', 'Galeri::restore/$1');
+            $routes->get('purge/(:num)', 'Galeri::purge/$1');
         });
 
         // MODUL PENGATURAN WEB
