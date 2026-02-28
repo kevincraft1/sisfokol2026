@@ -4,7 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? $title : 'Website'; ?> | <?= $setting['nama_web'] ?? 'Nama Sekolah'; ?></title>
+
+    <?php
+    // --- SETUP VARIABEL SEO DINAMIS DENGAN FALLBACK ---
+    $pageTitle = isset($title) ? $title . ' | ' . ($setting['nama_web'] ?? 'Nama Sekolah') : ($setting['nama_web'] ?? 'Nama Sekolah');
+    $metaDesc = isset($meta_description) ? $meta_description : ($setting['deskripsi'] ?? 'Mencetak generasi unggul yang siap kerja, berkarakter, dan memiliki jiwa wirausaha di era digital.');
+    $ogImage = isset($og_image) ? $og_image : base_url('uploads/setting/' . ($setting['logo'] ?? ''));
+    $ogType = isset($og_type) ? $og_type : 'website';
+    $currentUrl = current_url();
+    // --------------------------------------------------
+    ?>
+
+    <title><?= esc($pageTitle); ?></title>
+
+    <meta name="description" content="<?= esc($metaDesc); ?>">
+    <link rel="canonical" href="<?= esc($currentUrl); ?>">
+
+    <meta property="og:title" content="<?= esc(isset($title) ? $title : ($setting['nama_web'] ?? 'Website')); ?>">
+    <meta property="og:description" content="<?= esc($metaDesc); ?>">
+    <meta property="og:type" content="<?= esc($ogType); ?>">
+    <meta property="og:url" content="<?= esc($currentUrl); ?>">
+    <meta property="og:image" content="<?= esc($ogImage); ?>">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= esc(isset($title) ? $title : ($setting['nama_web'] ?? 'Website')); ?>">
+    <meta name="twitter:description" content="<?= esc($metaDesc); ?>">
+    <meta name="twitter:image" content="<?= esc($ogImage); ?>">
 
     <?php if (!empty($setting['logo'])): ?>
         <link rel="icon" href="<?= base_url('uploads/setting/' . $setting['logo']); ?>">
@@ -20,6 +45,8 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <link rel="stylesheet" href="<?= base_url('css/style.css'); ?>">
+
+    <?= $this->renderSection('schema'); ?>
 </head>
 
 <body>
@@ -43,13 +70,14 @@
                     <li class="nav-item"><a class="nav-link <?= (isset($active) && $active == 'berita') ? 'active' : ''; ?>" href="<?= base_url('berita'); ?>">Berita</a></li>
                     <li class="nav-item"><a class="nav-link <?= (isset($active) && $active == 'galeri') ? 'active' : ''; ?>" href="<?= base_url('galeri'); ?>">Galeri</a></li>
                     <li class="nav-item"><a class="nav-link <?= (isset($active) && $active == 'kontak') ? 'active' : ''; ?>" href="<?= base_url('kontak'); ?>">Kontak</a></li>
-                    <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
-                        <a class="btn btn-primary-custom px-4 py-2 rounded-pill fw-semibold"
-                            href="<?= !empty($setting['link_ppdb']) ? $setting['link_ppdb'] : '#'; ?>"
-                            <?= !empty($setting['link_ppdb']) ? 'target="_blank"' : ''; ?>>
-                            Daftar PPDB
-                        </a>
-                    </li>
+                    <?php if (!empty($setting['link_ppdb'])): ?>
+                        <li class="nav-item ms-lg-3 mt-3 mt-lg-0">
+                            <a class="btn btn-primary-custom px-4 py-2 rounded-pill fw-semibold"
+                                href="<?= esc($setting['link_ppdb']); ?>" target="_blank">
+                                Daftar PPDB
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -190,7 +218,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const counters = document.querySelectorAll('.counter-value');
-            const speed = 100; // Percepat sedikit agar animasinya lebih responsif
+            const speed = 100;
 
             const startCounters = () => {
                 counters.forEach(counter => {
@@ -198,22 +226,16 @@
                         const target = parseInt(counter.getAttribute('data-target')) || 0;
                         const suffix = counter.getAttribute('data-suffix') || '';
 
-                        // Ambil angka saat ini tanpa mengambil karakter selain angka
                         let currentCount = parseInt(counter.innerText.replace(/[^0-9]/g, '')) || 0;
-
-                        // Hitung langkah kenaikan (increment)
                         const inc = Math.ceil(target / speed);
 
                         if (currentCount < target) {
                             currentCount += inc;
-
-                            // Pastikan angkanya tidak kebablasan dari target
                             if (currentCount > target) currentCount = target;
 
                             counter.innerText = currentCount + suffix;
                             setTimeout(animate, 30);
                         } else {
-                            // Jika sudah mencapai target, rapikan format angkanya
                             if (target >= 1000) {
                                 counter.innerText = (target / 1000).toFixed(1).replace('.0', '') + 'K' + suffix;
                             } else {
@@ -227,9 +249,7 @@
 
             const statsSection = document.querySelector('.stats-section');
 
-            // Buat observer untuk mendeteksi apakah area statistik terlihat di layar
             if (statsSection) {
-                // Turunkan threshold menjadi 0.1 agar lebih cepat bereaksi walau baru di-scroll sedikit
                 const observerOptions = {
                     root: null,
                     threshold: 0.1
@@ -238,7 +258,7 @@
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             startCounters();
-                            observer.unobserve(entry.target); // Hentikan observasi agar tidak berulang
+                            observer.unobserve(entry.target);
                         }
                     });
                 }, observerOptions);

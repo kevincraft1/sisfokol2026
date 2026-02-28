@@ -39,3 +39,33 @@
     </div>
 </section>
 <?= $this->endSection(); ?>
+
+<?= $this->section('schema'); ?>
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "<?= current_url(); ?>"
+        },
+        "headline": "<?= esc($berita['title']); ?>",
+        "image": [
+            "<?= base_url('uploads/berita/' . $berita['image']); ?>"
+        ],
+        "datePublished": "<?= date('c', strtotime($berita['created_at'])); ?>",
+        "author": {
+            "@type": "Person",
+            "name": "Admin Sekolah"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "<?= esc($setting['nama_web'] ?? 'Nama Sekolah'); ?>",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "<?= base_url('uploads/setting/' . ($setting['logo'] ?? '')); ?>"
+            }
+        }
+    }
+</script>
+<?= $this->endSection(); ?>
